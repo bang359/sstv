@@ -1,130 +1,31 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>YouTube频道</title>
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    list-style:none;
-}
-.clearfix::after{
-    content:"";
-    display:block;
-    clear:both;
-}
-.bdright{
-    width:100%;
-    height:100vh; /* 占满浏览器可视高度 */
-}
-.colpadding2{
-    height:100%;
-}
-.charity{
-    border-bottom: 15px #111 solid;
-    background: #111;
-    border-left: 1px solid #111;
-    border-top: 1px solid #111;
-    padding:8px;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-}
-ul.tv{
-    display:flex;
-    flex-wrap:wrap;
-    gap:4px;
-    margin-bottom:6px;
-}
-ul.tv li{
-    flex:1;
-    min-width:62px;
-    text-align:center;
-    background:#333;
-    color:#fff;
-    padding:7px 4px;
-    cursor:pointer;
-    transition:0.2s;
-    font-size:14px;
-}
-ul.tv li:hover{
-    background:#555;
-}
-ul.tv li.on{
-    background:#0066cc;
-}
-ul.tv li.last{
-    flex:1;
-}
-/* 播放器最大化：自动填充剩余高度 */
-#youtube-news{
-    width:100%;
-    flex:1;
-    margin-top:6px;
-    display:block;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>ZWPlayer Preview</title>
+    <script type="text/javascript" charset="utf-8" src="https://cdn.zwplayer.com/v3/zwplayer/zwplayer.js"></script>
+    <style>
+        body { margin: 0; padding: 20px; background: transparent; }
+        .vxplayer { height: 40px; margin: 0 auto; background: #222; }
+        .vxplayer-toolbar { background: #222; height: 40px; border: 1px solid #c0c0c0; padding: 6px 10px; box-sizing: border-box; position: relative; }
+        .danmubar { height: 48px; background-color: #474343; padding: 7px 10px; border-top: 0; border-color: #000; box-sizing: border-box; }
+    </style>
 </head>
 <body>
-<div class="bdright">
-    <div class="colpadding2">
-        <div class="charity">
-            <ul class="tv clearfix">
-                <li data-id="51" onclick="handleTv(51)">東森</li>
-                <li data-id="52" onclick="handleTv(52)">中天</li>
-                <li data-id="53" onclick="handleTv(53)">民視</li>
-                <li data-id="54" onclick="handleTv(54)">三立</li>
-                <li data-id="55" class="last on" onclick="handleTv(55)">TVBS</li>
-            </ul>
-            <ul class="tv clearfix">
-                <li data-id="57" onclick="handleTv(57)">寰宇台湾</li>
-                <li data-id="13" onclick="handleTv(13)">寰宇</li>
-                <li data-id="10" onclick="handleTv(10)">中視</li>
-                <li data-id="12" onclick="handleTv(12)">公視</li>
-                <li data-id="56" class="last" onclick="handleTv(56)">華視</li>
-            </ul>
-            <ul class="tv clearfix">
-                <li data-id="60" onclick="handleTv(60)">凤凰</li>
-                <li data-id="58" onclick="handleTv(58)">NTD</li>
-                <li data-id="61" onclick="handleTv(61)">台视新闻</li>
-                <li data-id="59" onclick="handleTv(59)">镜新闻</li>
-            </ul>
-            <iframe id="youtube-news"
-                src="https://www.youtube.com/embed/m_dhMSvUCIc?rel=0&showinfo=0&autoplay=1&mute=1&controls=0"
-                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <script type="text/javascript">
-                const videoTube = document.getElementById('youtube-news');
-                const channelMap = {
-                    10: "https://www.youtube.com/embed/TCnaIE_SAtM?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    52: "https://www.youtube.com/embed/vr3XyVCR4T0?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    53: "https://www.youtube.com/embed/ylYJSBUgaMA?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    54: "https://www.youtube.com/embed/2x4x7mNMlvs?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    55: "https://www.youtube.com/embed/2mCSYvcfhtc?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    13: "https://www.youtube.com/embed/6IquAgfvYmc?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    12: "https://www.youtube.com/embed/quwqlazU-c8?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    51: "https://www.youtube.com/embed/V1p33hqPrUk?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    57: "https://www.youtube.com/embed/w87VGpgd90U?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    56: "https://www.youtube.com/embed/wM0g8EoUZ_E?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    60: "https://www.youtube.com/embed/Ry--eMIjYLQ?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    58: "https://www.youtube.com/embed/Bhp_V7H5QoY?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    61: "https://www.youtube.com/embed/MaTO_CAzqJA?rel=0&showinfo=0&autoplay=1&mute=0&controls=1",
-                    59: "https://www.youtube.com/embed/5n0y6b0Q25o?rel=0&showinfo=0&autoplay=1&mute=0&controls=1"
-                };
-
-                function handleTv(channel) {
-                    document.querySelectorAll('.tv li').forEach(item=>{
-                        item.classList.remove('on');
-                    })
-                    document.querySelector(`li[onclick="handleTv(${channel})"]`)?.classList.add("on");
-                    if(channelMap[channel]){
-                        videoTube.src = channelMap[channel];
-                    }
-                }
-            </script>
-        </div>
-    </div>
-</div>
+    <div class="video" id="mse" style="width: 100%; height: 720px; margin: 0 auto;"></div>
+    
+    <script type="text/javascript">
+        var info = {
+            playerElm: 'mse',
+            isLive: true,
+            url: 'http://15.204.105.50:25461/live/G2s9zK2n9m/xDtwVfWM8T/88.ts',
+            lang: 'zh',
+            width: '100%',
+            height: '720',
+            autoplay: false,
+            fixedControlbar: true
+        };
+        window.zwplayer = new ZWPlayer(info);
+    </script>
 </body>
 </html>
