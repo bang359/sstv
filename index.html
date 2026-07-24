@@ -2,30 +2,149 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>ZWPlayer Preview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZWPlayer 多频道播放</title>
+    <!-- 播放器内核CDN不改动 -->
     <script type="text/javascript" charset="utf-8" src="https://cdn.zwplayer.com/v3/zwplayer/zwplayer.js"></script>
     <style>
-        body { margin: 0; padding: 20px; background: transparent; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000;
+            color: #fff;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 左侧频道菜单 */
+        .channel-sidebar {
+            width: 220px;
+            background: #1a1a1a;
+            padding: 15px 10px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-title {
+            font-size: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .channel-item {
+            display: block;
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            background: #2d2d2d;
+            border: none;
+            color: #eee;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        .channel-item:hover {
+            background: #444;
+        }
+        .channel-item.active {
+            background: #007bff;
+            color: #fff;
+        }
+
+        /* 右侧播放器区域 */
+        .player-wrap {
+            flex: 1;
+            padding: 20px;
+        }
+        #mse {
+            width: 100%;
+            height: 720px;
+            background: #000;
+        }
+
+        /* 原有样式原样保留 */
         .vxplayer { height: 40px; margin: 0 auto; background: #222; }
         .vxplayer-toolbar { background: #222; height: 40px; border: 1px solid #c0c0c0; padding: 6px 10px; box-sizing: border-box; position: relative; }
         .danmubar { height: 48px; background-color: #474343; padding: 7px 10px; border-top: 0; border-color: #000; box-sizing: border-box; }
+
+        /* 小屏幕适配 */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .channel-sidebar { width: 100%; height: auto; max-height: 200px; }
+            #mse { height: 400px; }
+        }
     </style>
 </head>
 <body>
-    <div class="video" id="mse" style="width: 100%; height: 720px; margin: 0 auto;"></div>
-    
+    <!-- 左侧频道按钮列表 -->
+    <div class="channel-sidebar">
+        <div class="sidebar-title">频道列表</div>
+        <button class="channel-item active" data-url="http://15.204.105.50:25461/live/G2s9zK2n9m/xDtwVfWM8T/88.ts">
+            频道1-默认直播源
+        </button>
+        <button class="channel-item" data-url="http://15.204.105.50:25461/live/G2s9zK2n9m/xDtwVfWM8T/86.ts">
+            频道2
+        </button>
+        <button class="channel-item" data-url="http://15.204.105.50:25461/live/G2s9zK2n9m/xDtwVfWM8T/88.ts">
+            频道3
+        </button>
+        <button class="channel-item" data-url="http://15.204.105.50:25461/live/G2s9zK2n9m/xDtwVfWM8T/89.ts">
+            频道4
+        </button>
+        <button class="channel-item" data-url="http://15.204.105.50:25461/live/G2s9zK2n9m/xDtwVfWM8T/90.m3u8">
+            频道5
+        </button>
+    </div>
+
+    <!-- 播放器容器完全不变 -->
+    <div class="player-wrap">
+        <div class="video" id="mse"></div>
+    </div>
+
     <script type="text/javascript">
-        var info = {
+        // 1. 频道数据源，可自行无限新增
+        const channelList = document.querySelectorAll('.channel-item');
+        // 初始播放器配置（完全沿用你原来的参数，内核无修改）
+        const basePlayerConfig = {
             playerElm: 'mse',
             isLive: true,
-            url: 'http://15.204.105.50:25461/live/G2s9zK2n9m/xDtwVfWM8T/88.ts',
+            url: '',
             lang: 'zh',
             width: '100%',
             height: '720',
             autoplay: false,
             fixedControlbar: true
         };
-        window.zwplayer = new ZWPlayer(info);
+
+        // 初始化播放器实例
+        let zwplayer = null;
+        // 默认第一个频道地址
+        const firstUrl = channelList[0].dataset.url;
+        basePlayerConfig.url = firstUrl;
+        zwplayer = new ZWPlayer(basePlayerConfig);
+
+        // 2. 频道点击切换逻辑
+        channelList.forEach(btn => {
+            btn.addEventListener('click', function () {
+                // 移除所有激活态，当前按钮高亮
+                channelList.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const playUrl = this.dataset.url;
+
+                // 销毁旧播放器，重新实例化（ZWPlayer标准切换流方案，不修改内核）
+                if (zwplayer && typeof zwplayer.destroy === 'function') {
+                    zwplayer.destroy();
+                }
+                // 更新播放地址
+                basePlayerConfig.url = playUrl;
+                // 重新创建播放器
+                zwplayer = new ZWPlayer(basePlayerConfig);
+            });
+        });
     </script>
 </body>
 </html>
